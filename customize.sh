@@ -21,44 +21,44 @@ fi
 
 unzip -qo "${ZIPFILE}" -x 'META-INF/*' -d $MODPATH
 
-if [ -d /data/adb/box_bll ] ; then
-  cp /data/adb/box_bll/scripts/box.config /data/adb/box_bll/scripts/box.config.bak
+if [ -d /data/adb/tpclash ] ; then
+  cp /data/adb/tpclash/scripts/box.config /data/adb/tpclash/scripts/box.config.bak
   ui_print "- User configuration box.config has been backed up to box.config.bak"
 
-  cat /data/adb/box_bll/scripts/box.config >> $MODPATH/box_bll/scripts/box.config
-  cp -f $MODPATH/box_bll/scripts/* /data/adb/box_bll/scripts/
+  cat /data/adb/tpclash/scripts/box.config >> $MODPATH/tpclash/scripts/box.config
+  cp -f $MODPATH/tpclash/scripts/* /data/adb/tpclash/scripts/
   ui_print "- User configuration box.config has been"
   ui_print "- attached to the module box.config,"
   ui_print "- please re-edit box.config"
   ui_print "- after the update is complete."
 
-  awk '!x[$0]++' $MODPATH/box_bll/scripts/box.config > /data/adb/box_bll/scripts/box.config
+  awk '!x[$0]++' $MODPATH/tpclash/scripts/box.config > /data/adb/tpclash/scripts/box.config
 
-  rm -rf $MODPATH/box_bll
+  rm -rf $MODPATH/tpclash
 else
-  mv $MODPATH/box_bll /data/adb/
+  mv $MODPATH/tpclash /data/adb/
 fi
 
 if [ "$KSU" = true ] ; then
-  sed -i 's/name=box5magisk/name=box5KernelSU/g' $MODPATH/module.prop
+  sed -i 's/name=tpclash4androidmagisk/name=tpclash4androidKernelSU/g' $MODPATH/module.prop
 fi
 
-mkdir -p /data/adb/box_bll/bin/
-mkdir -p /data/adb/box_bll/run/
+mkdir -p /data/adb/tpclash/bin/
+mkdir -p /data/adb/tpclash/run/
 
-mv -f $MODPATH/box5_service.sh $service_dir/
+mv -f $MODPATH/tpclash4android_service.sh $service_dir/
 
 rm -f customize.sh
 
 set_perm_recursive $MODPATH 0 0 0755 0644
-set_perm_recursive /data/adb/box_bll/ 0 0 0755 0644
-set_perm_recursive /data/adb/box_bll/scripts/ 0 0 0755 0700
-set_perm_recursive /data/adb/box_bll/bin/ 0 0 0755 0700
+set_perm_recursive /data/adb/tpclash/ 0 0 0755 0644
+set_perm_recursive /data/adb/tpclash/scripts/ 0 0 0755 0700
+set_perm_recursive /data/adb/tpclash/bin/ 0 0 0755 0700
 
-set_perm $service_dir/box5_service.sh 0 0 0700
+set_perm $service_dir/tpclash4android_service.sh 0 0 0700
 
-# fix "set_perm_recursive /data/adb/box_bll/scripts" not working on some phones.
-chmod ugo+x /data/adb/box_bll/scripts/*
+# fix "set_perm_recursive /data/adb/tpclash/scripts" not working on some phones.
+chmod ugo+x /data/adb/tpclash/scripts/*
 
 for pid in $(pidof inotifyd) ; do
   if grep -q box.inotify /proc/${pid}/cmdline ; then
@@ -66,4 +66,4 @@ for pid in $(pidof inotifyd) ; do
   fi
 done
 
-inotifyd "/data/adb/box_bll/scripts/box.inotify" "/data/adb/modules/box5" > /dev/null 2>&1 &
+inotifyd "/data/adb/tpclash/scripts/box.inotify" "/data/adb/modules/tpclash4android" > /dev/null 2>&1 &
