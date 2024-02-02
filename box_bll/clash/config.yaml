@@ -1,0 +1,72 @@
+mixed-port: 7890
+redir-port: 7891
+tproxy-port: 1536
+allow-lan: true
+mode: rule
+geodata-mode: true
+unified-delay: true
+log-level: info
+ipv6: false
+external-controller: 0.0.0.0:9090
+external-ui: ./dashboard/Yacd
+secret: ""
+enable-process: true
+find-process-mode: strict
+global-client-fingerprint: chrome
+
+geox-url:
+  geoip: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat"
+  geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb"
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 28.0.0.1/8
+  fake-ip-filter:
+    - '*'
+    - '+.lan'
+    - 'connect.rom.miui.com'
+    - 'localhost.ptlogin2.qq.com'
+    - "*.msftncsi.com"
+    - "*.msftconnecttest.com"
+  nameserver:
+    - 114.114.114.114
+    - 223.5.5.5
+
+p: &p
+  {type: http, interval: 3600, health-check: {enable: true, url: https://www.gstatic.com/generate_204, interval: 300}}
+
+u: &u
+  use:
+  - 订阅地址
+
+proxy-providers:
+  订阅地址:
+    <<: *p
+    url: "http://127.0.0.1"
+    path: ./proxy_providers/subscribe.yaml 
+
+proxy-groups:
+  - {name: 节点选择, type: select, proxies: [自动选择,DIRECT], <<: *u}
+  - {name: 自动选择, <<: *u, tolerance: 2, type: url-test}
+
+rules:
+  - GEOSITE,category-ads-all,REJECT
+  - GEOSITE,cn,DIRECT
+  - GEOIP,private,DIRECT,no-resolve
+  - GEOIP,cn,DIRECT,no-resolve
+  - MATCH,节点选择
+#以上为绕过大陆模式，以下为黑名单模式
+#  - GEOSITE,category-ads-all,REJECT
+#  - GEOSITE,gfw,节点选择
+#  - GEOSITE,greatfire,节点选择
+#  - GEOSITE,geolocation-!cn,节点选择
+#  - GEOIP,telegram,节点选择,no-resolve
+#  - MATCH,DIRECT
