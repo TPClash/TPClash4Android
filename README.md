@@ -1,6 +1,10 @@
 # TPClash4Android
 
-本项目为 TPClash 的 [Magisk](https://github.com/topjohnwu/Magisk) 与 [KernelSU](https://github.com/tiann/KernelSU) 模块。支持在 Android 系统上使设备成为其他设备的旁路网关，支持 TUN（TCP + UDP）代理。
+本项目为 [TPClash](https://github.com/TPClash/tpclash) 的 [Magisk](https://github.com/topjohnwu/Magisk) 与 [KernelSU](https://github.com/tiann/KernelSU) 模块。
+
+支持在 Android 系统上使设备成为其他设备的旁路网关，支持 TUN（TCP + UDP）代理。
+
+基于 [Box4Magisk](https://github.com/CHIZI-0618/box4magisk) 和 [Box5](https://www.youtube.com/watch?v=oRyjX44Bxw4) 编写。
 
 ## 免责声明
 
