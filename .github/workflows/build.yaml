@@ -1,0 +1,54 @@
+name: TPClash4Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: Manually trigger
+        required: true
+        type: choice
+        options:
+          - build
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Put back the git branch into git
+      shell: bash
+      run: |
+        branch=""
+        if [ -n "$GITHUB_HEAD_REF" ]; then
+          branch="$GITHUB_HEAD_REF"
+        else
+          branch="${GITHUB_REF##*/}"
+        fi
+        git checkout -b "$branch" || true
+    - name: Output directory files
+      shell: bash
+      run: |
+        ls
+    - name: Get the latest version info of TPClash
+      id: latest
+      shell: bash
+      run: |
+        echo "latest=$(curl -sSL https://api.github.com/repos/TPClash/TPClash/releases/latest | \
+            jq -r '.assets[].browser_download_url | select (. | test("tpclash-mihomo-android-arm64"))')" >> $GITHUB_OUTPUT
+    - name: Download the latest version of TPClash
+      shell: bash
+      run: |
+        mkdir tpclash/bin/
+        curl -sSL ${{ steps.latest.outputs.latest }} > tpclash/bin/tpclash-mihomo-android-arm64
+        chmod +x tpclash/bin/tpclash-mihomo-android-arm64
+    - name: Get current date
+      id: timestamp
+      run: |
+        export TZ='Asia/Shanghai'
+        echo "date=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: TPClash4Android-${{ steps.timestamp.outputs.date }}
+        path: ./
